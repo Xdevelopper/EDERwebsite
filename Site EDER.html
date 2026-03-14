@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EDER Sàrl — Promotion Immobilière</title>
+  <style>
+    /* ── Reset & Variables ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg:        #F7F3EE;
+      --surface:   #EDE7DE;
+      --surface2:  #E2D9CE;
+      --border:    #D5CBBD;
+      --text:      #1A1A18;
+      --text-sub:  #6B6258;
+      --accent:    #8C7B6E;
+      --accent-dk: #6A5C52;
+      --white:     #FDFCFB;
+      --radius:    12px;
+      --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── Typography ── */
+    h1 { font-size: clamp(2.8rem, 6vw, 5.5rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; }
+    h2 { font-size: clamp(2rem, 4vw, 3.2rem); font-weight: 600; letter-spacing: -0.025em; line-height: 1.15; }
+    h3 { font-size: clamp(1.1rem, 2vw, 1.4rem); font-weight: 600; letter-spacing: -0.015em; }
+    p  { color: var(--text-sub); line-height: 1.75; }
+
+    /* ── Navigation ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(1.5rem, 5vw, 5rem);
+      height: 68px;
+      background: rgba(247, 243, 238, 0.85);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid transparent;
+      transition: border-color var(--transition);
+    }
+    nav.scrolled { border-bottom-color: var(--border); }
+
+    .nav-logo { text-decoration: none; display: inline-flex; align-items: center; }
+    .nav-logo img { height: 80px; width: auto; opacity: 0.9; transition: opacity 0.2s; }
+    .nav-logo img:hover { opacity: 1; }
+
+    .nav-links {
+      display: flex; gap: 2.5rem; list-style: none;
+      font-size: 0.88rem; font-weight: 500; letter-spacing: 0.02em;
+    }
+    .nav-links a { color: var(--text-sub); text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      background: var(--text); color: var(--white);
+      padding: 0.55rem 1.4rem; border-radius: 50px;
+      font-size: 0.85rem; font-weight: 500; letter-spacing: 0.02em;
+      text-decoration: none; transition: background 0.2s;
+    }
+    .nav-cta:hover { background: var(--accent-dk); }
+
+    .nav-burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .nav-burger span { display: block; width: 24px; height: 1.5px; background: var(--text); transition: var(--transition); }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 7rem clamp(1.5rem, 5vw, 5rem) 5rem;
+      background: var(--bg);
+    }
+
+    .hero-content { max-width: 560px; }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.65rem;
+      font-size: 0.82rem; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 1.5rem;
+    }
+    .hero-eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--accent); }
+
+    .hero-content h1 { margin-bottom: 1.5rem; color: var(--text); }
+    .hero-content > p { font-size: 1.15rem; max-width: 520px; margin-bottom: 2.5rem; color: var(--text-sub); }
+
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--text); color: var(--white);
+      padding: 0.9rem 2rem; border-radius: 50px;
+      font-size: 0.92rem; font-weight: 500;
+      text-decoration: none; transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--accent-dk); transform: translateY(-2px); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: transparent; color: var(--text);
+      border: 1.5px solid var(--border);
+      padding: 0.9rem 2rem; border-radius: 50px;
+      font-size: 0.92rem; font-weight: 500;
+      text-decoration: none; transition: border-color 0.2s, transform 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+    .hero-scroll {
+      display: none;
+      position: absolute; bottom: 2.5rem; right: clamp(1.5rem, 5vw, 5rem); z-index: 3;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--accent); text-decoration: none;
+      animation: scrollBounce 2.5s ease-in-out infinite;
+    }
+    @keyframes scrollBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(7px); } }
+
+    /* ── Section base ── */
+    section { padding: clamp(4.5rem, 10vw, 9rem) clamp(1.5rem, 5vw, 5rem); }
+
+    .section-eyebrow {
+      font-size: 0.76rem; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 1rem;
+    }
+
+    /* ── Stats ── */
+    #stats {
+      padding: 3.5rem clamp(1.5rem, 5vw, 5rem);
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 2rem; text-align: center; max-width: 900px; margin: 0 auto;
+    }
+    .stat-number {
+      font-size: clamp(2.2rem, 4.5vw, 3.2rem); font-weight: 700;
+      letter-spacing: -0.04em; color: var(--text); display: block;
+    }
+    .stat-suffix { font-size: 0.7em; }
+    .stat-label {
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent); margin-top: 0.3rem; display: block;
+    }
+
+    /* ── About ── */
+    #about .inner {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 6rem; align-items: center; max-width: 1200px; margin: 0 auto;
+    }
+    .about-text h2 { margin-bottom: 1.5rem; }
+    .about-text p { margin-bottom: 1.2rem; font-size: 1.03rem; }
+    .about-text p:last-of-type { margin-bottom: 2rem; }
+
+    /* Image zone — swap .ph-img for <img src="images/about.jpg"> when ready */
+    .img-zone {
+      border-radius: var(--radius); overflow: hidden;
+      background: var(--surface2);
+    }
+    .img-zone img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ph-img {
+      aspect-ratio: 4/5;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.75rem; color: var(--accent);
+    }
+    .ph-img svg { opacity: 0.35; }
+    .ph-img span { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.45; }
+
+    /* ── Services ── */
+    #services { background: var(--surface); }
+    .services-intro { max-width: 600px; margin-bottom: 4rem; }
+    .services-intro h2 { margin-bottom: 1rem; }
+
+    .services-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5px; background: var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      max-width: 1200px;
+    }
+    .service-card {
+      background: var(--surface); padding: 2.5rem 2rem;
+      transition: background var(--transition);
+    }
+    .service-card:hover { background: var(--bg); }
+    .service-icon {
+      width: 46px; height: 46px; border-radius: 10px;
+      background: var(--surface2); display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1.5rem; color: var(--accent);
+    }
+    .service-card h3 { margin-bottom: 0.7rem; }
+    .service-card p { font-size: 0.91rem; }
+
+    /* ── Projects ── */
+    #projects .projects-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 3rem; flex-wrap: wrap; gap: 1.5rem;
+    }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: 280px;
+      gap: 1.25rem;
+    }
+    .project-card { border-radius: var(--radius); overflow: hidden; position: relative; cursor: pointer; background: var(--surface2); }
+    .project-card:nth-child(1) { grid-column: span 7; grid-row: span 2; }
+    .project-card:nth-child(2) { grid-column: span 5; }
+    .project-card:nth-child(3) { grid-column: span 5; }
+    .project-card:nth-child(4) { grid-column: span 4; }
+    .project-card:nth-child(5) { grid-column: span 4; }
+    .project-card:nth-child(6) { grid-column: span 4; }
+
+    .project-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; display: block; }
+    .project-card:hover img { transform: scale(1.05); }
+
+    .ph-project {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.75rem; color: var(--accent);
+    }
+    .ph-project svg { opacity: 0.28; }
+    .ph-project span { font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; opacity: 0.4; }
+
+    .project-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(20,18,16,0.75) 0%, transparent 55%);
+      opacity: 0; transition: opacity 0.35s;
+      display: flex; flex-direction: column; justify-content: flex-end; padding: 1.75rem;
+    }
+    .project-card:hover .project-overlay { opacity: 1; }
+    .project-overlay h3 { color: #fff; font-size: 1.05rem; margin-bottom: 0.2rem; }
+    .project-overlay p  { color: rgba(255,255,255,0.65); font-size: 0.82rem; margin: 0; }
+
+    .project-tag {
+      position: absolute; top: 1rem; left: 1rem; z-index: 2;
+      background: rgba(247,243,238,0.92); backdrop-filter: blur(8px);
+      padding: 0.28rem 0.75rem; border-radius: 50px;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-dk);
+    }
+
+    /* ── Values ── */
+    #values { background: var(--text); text-align: center; }
+    #values .section-eyebrow { color: var(--accent); }
+    #values h2 { color: #fff; margin-bottom: 1rem; }
+    #values > .sub { color: rgba(255,255,255,0.5); max-width: 540px; margin: 0 auto 4rem; font-size: 1.03rem; }
+
+    .values-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem; max-width: 1100px; margin: 0 auto; text-align: left;
+    }
+    .value-item {
+      padding: 2rem; border-radius: var(--radius);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: background 0.3s;
+    }
+    .value-item:hover { background: rgba(255,255,255,0.09); }
+    .value-num {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em;
+      color: var(--accent); margin-bottom: 1.2rem; display: block;
+    }
+    .value-item h3 { color: #fff; margin-bottom: 0.6rem; font-size: 1.05rem; }
+    .value-item p  { color: rgba(255,255,255,0.48); font-size: 0.89rem; margin: 0; }
+
+    /* ── Team ── */
+    #team .team-header { text-align: center; max-width: 540px; margin: 0 auto 4rem; }
+    #team .team-header h2 { margin-bottom: 0.9rem; }
+
+    .team-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.75rem; max-width: 1000px; margin: 0 auto;
+    }
+    .team-card { background: var(--surface); border-radius: var(--radius); overflow: hidden; transition: transform 0.3s; }
+    .team-card:hover { transform: translateY(-5px); }
+
+    /* Team photo — replace ph-person with <img src="images/teamN.jpg"> when ready */
+    .team-photo { aspect-ratio: 1; background: var(--surface2); }
+    .team-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ph-person {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.5rem; color: var(--accent);
+    }
+    .ph-person svg { opacity: 0.3; }
+    .ph-person span { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.35; }
+
+    .team-info { padding: 1.4rem 1.5rem; }
+    .team-info h3 { margin-bottom: 0.2rem; font-size: 1rem; }
+    .team-info .role { font-size: 0.8rem; color: var(--accent); font-weight: 600; letter-spacing: 0.04em; }
+
+    /* ── Contact ── */
+    #contact { background: var(--surface); }
+    .contact-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 6rem; max-width: 1100px; margin: 0 auto; align-items: start;
+    }
+    .contact-info h2 { margin-bottom: 1.2rem; }
+    .contact-info > p { font-size: 1.03rem; margin-bottom: 2.5rem; }
+
+    .contact-details { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem 1.25rem; background: var(--bg);
+      border-radius: var(--radius); border: 1px solid var(--border);
+    }
+    .contact-item svg { flex-shrink: 0; color: var(--accent); }
+    .contact-item .ci-label {
+      display: block; font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.1rem;
+    }
+    .contact-item .ci-val { font-size: 0.9rem; color: var(--text); }
+
+    /* ── Form ── */
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-group label {
+      font-size: 0.74rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-sub);
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      background: var(--bg); border: 1.5px solid var(--border);
+      border-radius: 8px; padding: 0.85rem 1rem;
+      font-size: 0.91rem; font-family: inherit; color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none; -webkit-appearance: none; appearance: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(140,123,110,0.13);
+    }
+    .form-group textarea { resize: vertical; min-height: 130px; }
+
+    .checkboxes-wrap { display: flex; flex-direction: column; gap: 0.4rem; }
+    .checkboxes-wrap > label {
+      font-size: 0.74rem; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--text-sub);
+    }
+    .pills { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .pill input[type="checkbox"] { display: none; }
+    .pill label {
+      display: inline-block; padding: 0.42rem 1rem;
+      border-radius: 50px; border: 1.5px solid var(--border);
+      background: var(--bg); font-size: 0.82rem; font-weight: 500;
+      cursor: pointer; transition: all 0.2s; color: var(--text-sub);
+      letter-spacing: normal; text-transform: none;
+    }
+    .pill input:checked + label { background: var(--text); color: var(--white); border-color: var(--text); }
+
+    .btn-submit {
+      background: var(--text); color: var(--white);
+      border: none; padding: 1rem 2.2rem; border-radius: 50px;
+      font-size: 0.92rem; font-weight: 600; cursor: pointer;
+      transition: background 0.2s, transform 0.2s; align-self: flex-start;
+      font-family: inherit; letter-spacing: 0.01em;
+    }
+    .btn-submit:hover { background: var(--accent-dk); transform: translateY(-2px); }
+
+    .form-success {
+      display: none; padding: 1rem 1.25rem;
+      background: rgba(140,123,110,0.1); border: 1.5px solid var(--accent);
+      border-radius: var(--radius); font-size: 0.88rem; color: var(--accent-dk); font-weight: 500;
+    }
+    .form-success.show { display: block; }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--text); color: rgba(255,255,255,0.45);
+      padding: 4.5rem clamp(1.5rem, 5vw, 5rem) 2.5rem;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem; margin-bottom: 3.5rem;
+    }
+    .footer-brand .logo { text-decoration: none; display: inline-flex; align-items: center; margin-bottom: 1rem; }
+    .footer-brand .logo img { height: 72px; width: auto; opacity: 0.85; transition: opacity 0.2s; }
+    .footer-brand .logo img:hover { opacity: 1; }
+    .footer-brand p { font-size: 0.84rem; line-height: 1.75; max-width: 280px; }
+
+    .footer-col h4 {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 1.25rem;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; }
+    .footer-col ul a { color: rgba(255,255,255,0.4); text-decoration: none; font-size: 0.87rem; transition: color 0.2s; }
+    .footer-col ul a:hover { color: rgba(255,255,255,0.85); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-bottom p { font-size: 0.78rem; }
+
+    /* ── Reveal animation ── */
+    [data-reveal] { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    [data-reveal].visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Responsive ── */
+    @media (max-width: 960px) {
+      .nav-links, .nav-cta { display: none; }
+      .nav-burger { display: flex; }
+#about .inner { grid-template-columns: 1fr; gap: 3rem; }
+      .projects-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 200px; }
+      .project-card:nth-child(n) { grid-column: span 1; grid-row: span 1; }
+      .project-card:nth-child(1) { grid-column: span 2; }
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .projects-grid { grid-template-columns: 1fr; grid-auto-rows: 220px; }
+      .project-card:nth-child(n) { grid-column: span 1; }
+    }
+
+    /* Mobile nav drawer */
+    .mobile-nav {
+      position: fixed; inset: 0; z-index: 200;
+      background: var(--bg); padding: 5.5rem 2.5rem 2.5rem;
+      display: flex; flex-direction: column; gap: 1.75rem;
+      transform: translateX(100%); transition: transform var(--transition);
+    }
+    .mobile-nav.open { transform: translateX(0); }
+    .mobile-nav a { font-size: 1.75rem; font-weight: 600; color: var(--text); text-decoration: none; }
+    .mobile-close { position: absolute; top: 1.5rem; right: 1.5rem; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--text); }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ NAV ═══════════════════════════════════ -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo"><img src="images/EDER_logo_transparent.png" alt="EDER Sàrl" /></a>
+  <ul class="nav-links">
+    <li><a href="#about">L'entreprise</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#projects">Réalisations</a></li>
+    <li><a href="#team">Équipe</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Nous contacter</a>
+  <div class="nav-burger" id="burger" aria-label="Menu" role="button" tabindex="0">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<div class="mobile-nav" id="mobileNav" role="dialog" aria-label="Navigation">
+  <button class="mobile-close" id="mobileClose">✕</button>
+  <a href="#about"     class="mob-link">L'entreprise</a>
+  <a href="#services"  class="mob-link">Services</a>
+  <a href="#projects"  class="mob-link">Réalisations</a>
+  <a href="#team"      class="mob-link">Équipe</a>
+  <a href="#contact"   class="mob-link">Contact</a>
+</div>
+
+<!-- ═══════════════════════════════════ HERO ══════════════════════════════════ -->
+<section id="hero">
+
+  <div class="hero-content" data-reveal>
+    <div class="hero-eyebrow">Promotion Immobilière · Fribourg</div>
+    <h1>Construire<br>l'avenir,<br>ensemble.</h1>
+    <p>EDER Sàrl s'engage dans la promotion immobilière avec des projets de construction qui ont un impact réel sur leur environnement et les gens qui y vivent.</p>
+    <div class="hero-actions">
+      <a href="#projects" class="btn-primary">
+        Nos réalisations
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#contact" class="btn-secondary">Prendre contact</a>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════ STATS ═════════════════════════════════ -->
+<div id="stats">
+  <div class="stats-grid">
+    <div class="stat-item" data-reveal>
+      <span class="stat-number"><span data-count="18">0</span></span>
+      <span class="stat-label">Appartements en gestion</span>
+    </div>
+    <div class="stat-item" data-reveal>
+      <span class="stat-number"><span data-count="5">0</span></span>
+      <span class="stat-label">Sites de projets réalisés</span>
+    </div>
+    <div class="stat-item" data-reveal>
+      <span class="stat-number"><span data-count="2">0</span></span>
+      <span class="stat-label">Immeubles cédés</span>
+    </div>
+    <div class="stat-item" data-reveal>
+      <span class="stat-number" style="font-size:clamp(1.4rem,3vw,2rem);letter-spacing:-0.01em">★★★★★</span>
+      <span class="stat-label">Retour clientèle</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ ABOUT ════════════════════════════════ -->
+<section id="about">
+  <div class="inner">
+    <div class="about-text" data-reveal>
+      <div class="section-eyebrow">L'entreprise</div>
+      <h2>Une vision,<br>une exigence.</h2>
+      <p>EDER Sàrl est une entreprise de promotion immobilière basée à Corminboeuf, dans le canton de Fribourg. Notre ambition est de construire un avenir dans l'immobilier à travers des projets qui ont un impact concret — sur les lieux, sur les gens, sur les communautés.</p>
+      <p>De la villa individuelle à l'immeuble résidentiel, chaque réalisation porte la même exigence : des constructions pensées pour durer, bien implantées dans leur environnement, et qui apportent une réelle valeur à leurs occupants.</p>
+      <a href="#contact" class="btn-secondary">En savoir plus</a>
+    </div>
+
+    <div class="img-zone" data-reveal>
+      <img src="images/images Corminboeuf flan.jpeg" alt="Projet Corminboeuf — EDER Sàrl" />
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ SERVICES ════════════════════════════ -->
+<section id="services">
+  <div class="services-intro" data-reveal>
+    <div class="section-eyebrow">Nos services</div>
+    <h2>De l'idée au projet livré.</h2>
+    <p>EDER Sàrl prend en charge l'ensemble du cycle de promotion immobilière, garantissant cohérence et maîtrise à chaque étape.</p>
+  </div>
+
+  <div class="services-grid">
+    <div class="service-card" data-reveal>
+      <div class="service-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </div>
+      <h3>Promotion résidentielle</h3>
+      <p>Développement de logements individuels et collectifs — villas, immeubles, lotissements — adaptés à chaque marché local.</p>
+    </div>
+
+    <div class="service-card" data-reveal>
+      <div class="service-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 8v4l3 3"/>
+        </svg>
+      </div>
+      <h3>Gestion de projet</h3>
+      <p>Coordination complète : foncier, architectes, entreprises, autorités — un seul interlocuteur pour la totalité du projet.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ PROJECTS ═════════════════════════════ -->
+<section id="projects">
+  <div class="projects-header" data-reveal>
+    <div>
+      <div class="section-eyebrow">Réalisations</div>
+      <h2>Des projets qui<br>parlent d'eux-mêmes.</h2>
+    </div>
+    <a href="#contact" class="btn-secondary">Tous les projets</a>
+  </div>
+
+  <div class="projects-grid">
+
+    <div class="project-card" data-reveal>
+      <span class="project-tag">Livré 2025</span>
+      <img src="images/image corminboeuf face.jpeg" alt="Corminboeuf — EDER Sàrl" />
+      <div class="project-overlay">
+        <h3>Corminboeuf</h3>
+        <p>8 villas individuelles — Corminboeuf</p>
+      </div>
+    </div>
+
+    <!-- PROJET 2 -->
+    <div class="project-card" data-reveal>
+      <span class="project-tag">Livré 2023</span>
+      <img src="images/image dompierre .jpeg" alt="Dompierre II — EDER Sàrl" />
+      <div class="project-overlay">
+        <h3>Dompierre II</h3>
+        <p>Immeuble résidentiel — Dompierre</p>
+      </div>
+    </div>
+
+    <!-- PROJET 3 -->
+    <div class="project-card" data-reveal>
+      <span class="project-tag">Livré 2020</span>
+      <img src="images/image dompierre derrière.jpeg" alt="Dompierre I — EDER Sàrl" />
+      <div class="project-overlay">
+        <h3>Dompierre I</h3>
+        <p>Immeuble résidentiel — Dompierre</p>
+      </div>
+    </div>
+
+    <!-- PROJET 4 -->
+    <div class="project-card" data-reveal>
+      <span class="project-tag">Livré 2019</span>
+      <img src="images/image corminboeuf derrière.jpeg" alt="Tentlingen — EDER Sàrl" />
+      <div class="project-overlay">
+        <h3>Tentlingen</h3>
+        <p>Immeuble résidentiel — Tentlingen</p>
+      </div>
+    </div>
+
+    <!-- PROJET 5 -->
+    <div class="project-card" data-reveal>
+      <span class="project-tag">Livré 2018</span>
+      <img src="images/image cournillens dehors.jpeg" alt="Cournillens — EDER Sàrl" />
+      <div class="project-overlay">
+        <h3>Portalban</h3>
+        <p>Immeuble résidentiel — Portalban</p>
+      </div>
+    </div>
+
+    <!-- PROJET 6 -->
+    <div class="project-card" data-reveal>
+      <span class="project-tag">Livré 2016</span>
+      <img src="images/image cournillens dedans .jpeg" alt="Cournillens intérieur — EDER Sàrl" />
+      <div class="project-overlay">
+        <h3>Cournillens</h3>
+        <p>Villa individuelle — Cournillens</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ VALUES ═══════════════════════════════ -->
+<section id="values">
+  <div class="section-eyebrow" data-reveal>Nos engagements</div>
+  <h2 data-reveal>Ce qui nous guide.</h2>
+  <p class="sub" data-reveal>Des principes fondateurs qui orientent chaque décision, chaque conception, chaque réalisation.</p>
+
+  <div class="values-grid">
+    <div class="value-item" data-reveal>
+      <span class="value-num">01</span>
+      <h3>Qualité sans compromis</h3>
+      <p>Des matériaux sélectionnés, des finitions soignées, des partenaires exigeants. Nous ne livrons que ce dont nous serions fiers.</p>
+    </div>
+    <div class="value-item" data-reveal>
+      <span class="value-num">02</span>
+      <h3>Durabilité</h3>
+      <p>Construire aujourd'hui en pensant à demain : efficacité énergétique, respect du site, matériaux pérennes.</p>
+    </div>
+    <div class="value-item" data-reveal>
+      <span class="value-num">03</span>
+      <h3>Transparence</h3>
+      <p>Un suivi de projet clair, des délais respectés, une communication honnête avec nos clients et partenaires.</p>
+    </div>
+    <div class="value-item" data-reveal>
+      <span class="value-num">04</span>
+      <h3>Ancrage local</h3>
+      <p>Nous connaissons le tissu économique et humain de notre région. Chaque projet contribue à son essor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ TEAM ════════════════════════════════ -->
+<section id="team">
+  <div class="team-header" data-reveal>
+    <div class="section-eyebrow">L'équipe</div>
+    <h2>Les personnes derrière les projets.</h2>
+    <p>Une direction engagée, disponible et impliquée à chaque étape de vos projets.</p>
+  </div>
+
+  <div class="team-grid" style="max-width:320px;margin:0 auto;">
+
+    <div class="team-card" data-reveal style="display:flex;align-items:center;padding:2rem 2rem;gap:1.25rem;">
+      <div style="width:52px;height:52px;border-radius:50%;background:var(--surface2);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+        <span style="font-size:1.3rem;font-weight:700;color:var(--accent);letter-spacing:-0.02em;">BG</span>
+      </div>
+      <div>
+        <h3 style="margin-bottom:0.2rem;">Bashkim Guta</h3>
+        <p class="role">CEO — Fondateur</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ CONTACT ══════════════════════════════ -->
+<section id="contact">
+  <div class="contact-grid">
+
+    <div class="contact-info" data-reveal>
+      <div class="section-eyebrow">Contact</div>
+      <h2>Parlons de<br>votre projet.</h2>
+      <p>Que vous soyez investisseur, acquéreur ou simplement curieux, notre équipe est à votre disposition pour répondre à toutes vos questions.</p>
+
+      <div class="contact-details">
+        <div class="contact-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          <div>
+            <span class="ci-label">Adresse</span>
+            <span class="ci-val">Route de Belfaux 46c, 1720 Corminboeuf</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.22 1.18 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.72 6.72l1.08-1.08a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+          </svg>
+          <div>
+            <span class="ci-label">Téléphone</span>
+            <span class="ci-val">+41 78 776 28 26</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          <div>
+            <span class="ci-label">E-mail</span>
+            <span class="ci-val">b.k.g@hotmail.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div data-reveal>
+      <form class="contact-form" id="contactForm" novalidate>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">Prénom</label>
+            <input type="text" id="firstName" name="firstName" placeholder="Jean" required />
+          </div>
+          <div class="form-group">
+            <label for="lastName">Nom</label>
+            <input type="text" id="lastName" name="lastName" placeholder="Dupont" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Adresse e-mail</label>
+          <input type="email" id="email" name="email" placeholder="jean.dupont@mail.com" required />
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Téléphone (optionnel)</label>
+          <input type="tel" id="phone" name="phone" placeholder="+41 XX XXX XX XX" />
+        </div>
+
+        <div class="form-group">
+          <label for="subject">Objet de la demande</label>
+          <select id="subject" name="subject">
+            <option value="">Sélectionner…</option>
+            <option value="achat">Achat d'un bien</option>
+            <option value="investissement">Investissement immobilier</option>
+            <option value="partenariat">Partenariat / foncier</option>
+            <option value="renseignement">Renseignement général</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+
+        <div class="checkboxes-wrap">
+          <label>Centres d'intérêt</label>
+          <div class="pills">
+            <div class="pill"><input type="checkbox" id="c1" name="interest" value="residentiel"><label for="c1">Résidentiel</label></div>
+            <div class="pill"><input type="checkbox" id="c2" name="interest" value="commercial"><label for="c2">Commercial</label></div>
+            <div class="pill"><input type="checkbox" id="c3" name="interest" value="villa"><label for="c3">Villa individuelle</label></div>
+            <div class="pill"><input type="checkbox" id="c4" name="interest" value="invest"><label for="c4">Investissement</label></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Décrivez votre projet ou votre demande…" required></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Envoyer le message →</button>
+
+        <div class="form-success" id="formSuccess">
+          ✓ Votre message a bien été envoyé. Nous vous répondrons sous 48 h ouvrables.
+        </div>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ FOOTER ═══════════════════════════════ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#hero" class="logo"><img src="images/EDER_logo_blanc_transparent.png" alt="EDER Sàrl" /></a>
+      <p>EDER Sàrl — Promotion immobilière. Construire des espaces de vie durables et qualitatifs dans le canton de Fribourg et en Suisse romande.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Entreprise</h4>
+      <ul>
+        <li><a href="#about">À propos</a></li>
+        <li><a href="#values">Nos valeurs</a></li>
+        <li><a href="#team">L'équipe</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#services">Promotion résidentielle</a></li>
+        <li><a href="#services">Gestion de projet</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:b.k.g@hotmail.com">b.k.g@hotmail.com</a></li>
+        <li><a href="tel:+41787762826">+41 78 776 28 26</a></li>
+        <li><a href="#contact">Formulaire de contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 EDER Sàrl. Tous droits réservés.</p>
+    <p>Promotion immobilière · Canton de Fribourg</p>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════ SCRIPTS ══════════════════════════════ -->
+<script>
+  /* ── Nav scroll effect ── */
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
+  }, { passive: true });
+
+  /* ── Mobile nav ── */
+  document.getElementById('burger').addEventListener('click', () => {
+    document.getElementById('mobileNav').classList.add('open');
+  });
+  document.getElementById('mobileClose').addEventListener('click', () => {
+    document.getElementById('mobileNav').classList.remove('open');
+  });
+  document.querySelectorAll('.mob-link').forEach(link => {
+    link.addEventListener('click', () => document.getElementById('mobileNav').classList.remove('open'));
+  });
+
+  /* ── Scroll reveal ── */
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const delay = parseInt(entry.target.dataset.delay || 0);
+        setTimeout(() => entry.target.classList.add('visible'), delay);
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('[data-reveal]').forEach((el) => {
+    const siblings = Array.from(el.parentNode.children).filter(c => c.hasAttribute('data-reveal'));
+    el.dataset.delay = siblings.indexOf(el) * 90;
+    revealObserver.observe(el);
+  });
+
+  /* ── Animated counters ── */
+  function animateCount(el, target, duration) {
+    let start = null;
+    (function step(ts) {
+      if (!start) start = ts;
+      const p = Math.min((ts - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(eased * target);
+      if (p < 1) requestAnimationFrame(step);
+    })(performance.now());
+  }
+
+  const countObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const el = entry.target;
+        animateCount(el, parseInt(el.dataset.count), 1600);
+        countObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.6 });
+
+  document.querySelectorAll('[data-count]').forEach(el => countObserver.observe(el));
+
+  /* ── Contact form (front-end demo) ── */
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const btn = this.querySelector('.btn-submit');
+    btn.textContent = 'Envoi en cours…';
+    btn.disabled = true;
+    // Simulated send — replace this with a real fetch() to your backend/formspree
+    setTimeout(() => {
+      this.reset();
+      document.querySelectorAll('.pill input').forEach(cb => cb.checked = false);
+      document.getElementById('formSuccess').classList.add('show');
+      btn.textContent = 'Envoyer le message →';
+      btn.disabled = false;
+    }, 1200);
+  });
+</script>
+</body>
+</html>
